@@ -337,7 +337,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
   },
 
   advanceSector: () => {
-    const { sector, clearedICE, grid, decodeCycles, mode, score, highScore, storyHighScore } = get()
+    const { sector, grid, decodeCycles, mode, score, highScore, storyHighScore } = get()
 
     const decodedThisSector = grid.flat().filter((t) => t.isDecoded).length
     const sectorScore = sector * sector * 100 + decodedThisSector * 25 + decodeCycles * 50

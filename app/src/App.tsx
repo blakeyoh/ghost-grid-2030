@@ -7,6 +7,8 @@ import { DerezScreen } from './components/ui/DerezScreen'
 import { VictoryScreen } from './components/ui/VictoryScreen'
 import { DecodeMinigame } from './components/ui/DecodeMinigame'
 import { SectorTransition } from './components/ui/SectorTransition'
+import { LoreModal } from './components/ui/LoreModal'
+import { PauseScreen } from './components/ui/PauseScreen'
 
 export default function App() {
   return (
@@ -28,6 +30,8 @@ export default function App() {
       <VictoryScreen />
       <DecodeMinigame />
       <SectorTransition />
+      <LoreModal />
+      <PauseScreen />
     </div>
   )
 }

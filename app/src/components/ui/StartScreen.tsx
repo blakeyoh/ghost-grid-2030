@@ -3,6 +3,7 @@ import { useGameStore } from '../../store/gameStore'
 export function StartScreen() {
   const phase = useGameStore((s) => s.phase)
   const startPlaying = useGameStore((s) => s.startPlaying)
+  const startEndless = useGameStore((s) => s.startEndless)
 
   if (phase !== 'start') return null
 
@@ -12,11 +13,16 @@ export function StartScreen() {
         GHOST GRID
       </div>
       <div className="overlay-subtitle">
-        NAVIGATE THE CORRUPTED SECTOR
+        NAVIGATE THE CORRUPTED SECTORS
       </div>
-      <button className="overlay-button" onClick={startPlaying}>
-        INITIALIZE
-      </button>
+      <div className="overlay-button-group">
+        <button className="overlay-button" onClick={startPlaying}>
+          STORY MODE
+        </button>
+        <button className="overlay-button overlay-button--secondary" onClick={startEndless}>
+          ENDLESS MODE
+        </button>
+      </div>
     </div>
   )
 }

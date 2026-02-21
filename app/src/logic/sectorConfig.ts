@@ -5,7 +5,7 @@ export const SECTOR_CONFIGS: readonly SectorConfig[] = [
     sector: 1,
     gridSize: 10,
     iceCount: 15,
-    name: 'TRAINING GRID',
+    name: 'BOOT SECTOR',
     bloomIntensity: 1.5,
     fogNear: 10,
     fogFar: 50,
@@ -16,7 +16,7 @@ export const SECTOR_CONFIGS: readonly SectorConfig[] = [
     sector: 2,
     gridSize: 10,
     iceCount: 20,
-    name: 'CONTESTED ZONE',
+    name: 'KERNEL',
     bloomIntensity: 1.8,
     fogNear: 8,
     fogFar: 40,
@@ -27,7 +27,7 @@ export const SECTOR_CONFIGS: readonly SectorConfig[] = [
     sector: 3,
     gridSize: 12,
     iceCount: 25,
-    name: 'DEEP GRID',
+    name: 'ROOT',
     bloomIntensity: 2.0,
     fogNear: 6,
     fogFar: 35,
@@ -41,4 +41,28 @@ export const TOTAL_SECTORS = SECTOR_CONFIGS.length
 export function getSectorConfig(sector: number): SectorConfig {
   const index = Math.max(0, Math.min(sector - 1, SECTOR_CONFIGS.length - 1))
   return SECTOR_CONFIGS[index]
+}
+
+function sectorAccentColor(sector: number): string {
+  const colors = ['#00ffff', '#0088ff', '#8800ff', '#ff0066', '#ff6600']
+  return colors[(sector - 1) % colors.length]
+}
+
+export function generateEndlessSector(sector: number): SectorConfig {
+  const gridSize = Math.min(20, 10 + Math.floor((sector - 1) / 3))
+  const iceCount = Math.min(
+    Math.floor(gridSize * gridSize * 0.28),
+    10 + sector * 2
+  )
+  return {
+    sector,
+    gridSize,
+    iceCount,
+    name: `SECTOR ${sector}`,
+    bloomIntensity: Math.min(3.0, 1.5 + (sector - 1) * 0.08),
+    fogNear: Math.max(4, 10 - (sector - 1) * 0.3),
+    fogFar: Math.max(20, 50 - (sector - 1) * 1.5),
+    accentColor: sectorAccentColor(sector),
+    ambientIntensity: Math.max(0.05, 0.15 - (sector - 1) * 0.005),
+  }
 }

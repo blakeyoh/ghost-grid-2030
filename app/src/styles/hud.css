@@ -63,6 +63,87 @@
   white-space: nowrap;
 }
 
+/* HUD action bar (bottom center) */
+.hud-action-bar {
+  position: absolute;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 6px;
+  pointer-events: all;
+}
+
+.hud-action-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 8px 14px;
+  border: 1px solid rgba(0, 255, 255, 0.2);
+  background: rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: 'Orbitron', sans-serif;
+  min-width: 64px;
+}
+
+.hud-action-btn:hover:not(.hud-action-btn--disabled):not(.hud-action-btn--info) {
+  border-color: rgba(0, 255, 255, 0.5);
+  background: rgba(0, 255, 255, 0.06);
+}
+
+.hud-action-btn--active {
+  border-color: rgba(255, 170, 0, 0.6) !important;
+  background: rgba(255, 170, 0, 0.08) !important;
+  box-shadow: 0 0 12px rgba(255, 170, 0, 0.15), inset 0 0 12px rgba(255, 170, 0, 0.05);
+}
+
+.hud-action-btn--active .hud-action-icon,
+.hud-action-btn--active .hud-action-label,
+.hud-action-btn--active .hud-action-count {
+  color: #ffaa00;
+  text-shadow: 0 0 8px rgba(255, 170, 0, 0.6);
+}
+
+.hud-action-btn--disabled {
+  opacity: 0.3;
+  cursor: default;
+  pointer-events: none;
+}
+
+.hud-action-btn--info {
+  cursor: default;
+  pointer-events: none;
+}
+
+.hud-action-icon {
+  font-size: 14px;
+  color: rgba(0, 255, 255, 0.7);
+  line-height: 1;
+}
+
+.hud-action-label {
+  font-size: 7px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: rgba(0, 255, 255, 0.4);
+}
+
+.hud-action-count {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: rgba(0, 255, 255, 0.8);
+  text-shadow: 0 0 8px rgba(0, 255, 255, 0.4);
+}
+
+/* Amber title variant for pause confirm */
+.overlay-title--amber {
+  color: #ffaa00;
+  text-shadow: 0 0 20px #ffaa00, 0 0 40px #ffaa00, 0 0 80px rgba(255, 170, 0, 0.5);
+}
+
 /* Overlay screens */
 .overlay {
   position: absolute;
@@ -229,4 +310,219 @@
 .decode-result--fail {
   color: #ff3300;
   text-shadow: 0 0 10px #ff3300;
+}
+
+/* Button group layout */
+.overlay-button-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+}
+
+/* Secondary button variant */
+.overlay-button--secondary {
+  color: rgba(0, 255, 255, 0.5);
+  border-color: rgba(0, 255, 255, 0.15);
+  font-size: 12px;
+  padding: 10px 32px;
+  text-shadow: none;
+}
+
+.overlay-button--secondary:hover {
+  color: rgba(0, 255, 255, 0.8);
+  border-color: rgba(0, 255, 255, 0.4);
+  background: rgba(0, 255, 255, 0.05);
+  box-shadow: none;
+}
+
+/* Score display on end screens */
+.overlay-score-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 32px;
+  gap: 4px;
+}
+
+.overlay-score-label {
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0.3em;
+  color: rgba(0, 255, 255, 0.5);
+}
+
+.overlay-score-value {
+  font-size: clamp(28px, 5vw, 48px);
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  color: #00ffff;
+  text-shadow: 0 0 20px #00ffff, 0 0 40px rgba(0, 255, 255, 0.5);
+}
+
+.overlay-score-best {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.3em;
+  color: #ffaa00;
+  text-shadow: 0 0 10px #ffaa00;
+}
+
+.overlay-score-sector {
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0.2em;
+  color: rgba(0, 255, 255, 0.4);
+  margin-top: 4px;
+}
+
+/* Danger button variant (end game confirm) */
+.overlay-button--danger {
+  color: #ff3300;
+  border-color: rgba(255, 51, 0, 0.4);
+  text-shadow: 0 0 10px #ff3300;
+}
+
+.overlay-button--danger:hover {
+  background: rgba(255, 51, 0, 0.1);
+  border-color: #ff3300;
+  box-shadow: 0 0 20px rgba(255, 51, 0, 0.3), inset 0 0 20px rgba(255, 51, 0, 0.05);
+}
+
+/* Pause button in HUD corner */
+.hud-pause-btn {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  pointer-events: all;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  color: rgba(0, 255, 255, 0.4);
+  background: transparent;
+  border: 1px solid rgba(0, 255, 255, 0.12);
+  padding: 6px 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.hud-pause-btn:hover {
+  color: rgba(0, 255, 255, 0.8);
+  border-color: rgba(0, 255, 255, 0.35);
+  background: rgba(0, 255, 255, 0.05);
+}
+
+/* Pause screen — controls reference */
+.pause-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 40px;
+  max-width: min(520px, 90vw);
+  width: 100%;
+}
+
+.pause-controls-title {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.3em;
+  color: rgba(0, 255, 255, 0.4);
+  text-align: center;
+  margin-bottom: 8px;
+  border-bottom: 1px solid rgba(0, 255, 255, 0.1);
+  padding-bottom: 10px;
+}
+
+.pause-control-row {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+}
+
+.pause-control-key {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  color: #00ffff;
+  text-shadow: 0 0 8px rgba(0, 255, 255, 0.5);
+  white-space: nowrap;
+  min-width: 200px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.pause-control-desc {
+  font-size: 9px;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  color: rgba(0, 255, 255, 0.5);
+}
+
+/* Lore modal */
+.lore-modal-backdrop {
+  background: rgba(0, 0, 0, 0.92);
+  backdrop-filter: blur(2px);
+}
+
+.lore-modal {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  max-width: min(480px, 90vw);
+  text-align: center;
+}
+
+.lore-header {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.35em;
+  color: #ff3300;
+  text-shadow: 0 0 10px #ff3300;
+  margin-bottom: 6px;
+}
+
+.lore-subheader {
+  font-size: 9px;
+  font-weight: 400;
+  letter-spacing: 0.25em;
+  color: rgba(255, 51, 0, 0.6);
+  margin-bottom: 24px;
+}
+
+.lore-divider {
+  width: 60px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.4), transparent);
+  margin-bottom: 24px;
+}
+
+.lore-body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 36px;
+}
+
+.lore-body p {
+  margin: 0;
+  font-size: clamp(12px, 2vw, 15px);
+  font-weight: 400;
+  letter-spacing: 0.15em;
+  color: rgba(0, 255, 255, 0.7);
+  line-height: 1.6;
+}
+
+.lore-highlight {
+  color: #00ffff;
+  text-shadow: 0 0 10px #00ffff;
+  font-weight: 700;
+}
+
+.lore-tagline {
+  color: rgba(0, 255, 255, 0.5) !important;
+  font-style: italic;
+  margin-top: 8px !important;
+  font-size: clamp(10px, 1.5vw, 13px) !important;
 }

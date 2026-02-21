@@ -30,10 +30,10 @@ export function SectorTransition() {
   return (
     <div className="overlay overlay-backdrop">
       <div className="overlay-title overlay-title--cyan">
-        SECTOR {sector} CLEAR
+        SECTOR {sector} PURGED
       </div>
       <div className="overlay-subtitle">
-        I/O PORT REACHED — ADVANCING
+        RESTORE PORT REACHED — ADVANCING
       </div>
       <div
         style={{

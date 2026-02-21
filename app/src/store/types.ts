@@ -1,10 +1,13 @@
 export type GamePhase =
   | 'start'
   | 'playing'
+  | 'paused'
   | 'decoding'
   | 'transitioning'
   | 'derezzed'
   | 'extracted'
+
+export type GameMode = 'story' | 'endless'
 
 export interface TileState {
   readonly x: number

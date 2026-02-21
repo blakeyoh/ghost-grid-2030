@@ -111,7 +111,11 @@ export function DecodeMinigame() {
         : 'decode-indicator--danger'
 
   return (
-    <div className="decode-overlay" onClick={handleAction}>
+    <div
+      className="decode-overlay"
+      onClick={handleAction}
+      onTouchStart={(e) => { e.preventDefault(); handleAction() }}
+    >
       <div className="decode-title">
         {decodeState === 'result'
           ? success

@@ -4,11 +4,11 @@ import { Vector2 } from 'three'
 import { useGameStore } from '../../store/gameStore'
 import { getSectorConfig } from '../../logic/sectorConfig'
 
-const CHROMATIC_OFFSET = new Vector2(0.002, 0.002)
-
 export function PostProcessing() {
   const sector = useGameStore((s) => s.sector)
   const config = getSectorConfig(sector)
+
+  const chromaticOffset = new Vector2(0.002, 0.002)
 
   return (
     <EffectComposer>
@@ -20,7 +20,7 @@ export function PostProcessing() {
       />
       <ChromaticAberration
         blendFunction={BlendFunction.NORMAL}
-        offset={CHROMATIC_OFFSET}
+        offset={chromaticOffset}
         radialModulation={false}
         modulationOffset={0}
       />

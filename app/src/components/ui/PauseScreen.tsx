@@ -73,20 +73,24 @@ export function PauseScreen() {
       <div className="pause-controls">
         <div className="pause-controls-title">HOW TO PLAY</div>
         <div className="pause-control-row">
-          <span className="pause-control-key">CLICK</span>
-          <span className="pause-control-desc">Reveal tile in PROC-7's scan zone</span>
+          <span className="pause-control-key">CLICK (unrevealed tile)</span>
+          <span className="pause-control-desc">Reveal tile in scan zone</span>
         </div>
         <div className="pause-control-row">
-          <span className="pause-control-key">DOUBLE-CLICK / DOUBLE-TAP</span>
-          <span className="pause-control-desc">Move PROC-7 to any revealed tile</span>
+          <span className="pause-control-key">CLICK (revealed tile)</span>
+          <span className="pause-control-desc">Move PROC-7</span>
         </div>
         <div className="pause-control-row">
-          <span className="pause-control-key">RIGHT-CLICK / HOLD</span>
-          <span className="pause-control-desc">Tag suspected FAULT NODE</span>
+          <span className="pause-control-key">TAG (HUD button)</span>
+          <span className="pause-control-desc">Toggle tag mode — click tiles to flag FAULTs</span>
         </div>
         <div className="pause-control-row">
-          <span className="pause-control-key">DECODE (HUD BUTTON)</span>
+          <span className="pause-control-key">DECODE (HUD button)</span>
           <span className="pause-control-desc">Use decode cycle — then click a tile</span>
+        </div>
+        <div className="pause-control-row">
+          <span className="pause-control-key">EMP (HUD button)</span>
+          <span className="pause-control-desc">Clear FAULTs and viruses in scan area</span>
         </div>
         <div className="pause-control-row">
           <span className="pause-control-key">DRAG / SCROLL</span>

@@ -6,7 +6,6 @@ import { characterWorldPos } from '../../store/characterRef'
 
 export function CameraRig() {
   const gridSize = useGameStore((s) => s.gridSize)
-  const isLongPressing = useGameStore((s) => s.isLongPressing)
   const { camera } = useThree()
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const controlsRef = useRef<any>(null)
@@ -39,7 +38,6 @@ export function CameraRig() {
       enablePan={false}
       rotateSpeed={0.5}
       zoomSpeed={0.8}
-      enabled={!isLongPressing}
     />
   )
 }

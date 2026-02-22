@@ -5,6 +5,7 @@ import { CameraRig } from './CameraRig'
 import { GridSystem } from './GridSystem'
 import { Character } from './Character'
 import { ScanZoneBorder } from './ScanZoneBorder'
+import { EMPFlash } from './EMPFlash'
 
 export function GameScene() {
   return (
@@ -16,6 +17,7 @@ export function GameScene() {
       <GridSystem />
       <Character />
       <ScanZoneBorder />
+      <EMPFlash />
     </>
   )
 }

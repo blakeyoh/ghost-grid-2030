@@ -15,12 +15,17 @@ interface GameStore {
   readonly characterPosition: { x: number; y: number }
   readonly isCharacterMoving: boolean
   readonly hasSeenLore: boolean
-  readonly isLongPressing: boolean
   readonly mode: GameMode
   readonly score: number
   readonly highScore: number
   readonly storyHighScore: number
   readonly decodeMode: boolean
+  readonly tagMode: boolean
+  readonly virusTiles: readonly { x: number; y: number }[]
+  readonly virusTileSet: ReadonlySet<string>
+  readonly virusAlertActive: boolean
+  readonly empCharges: number
+  readonly empFlashActive: boolean
 
   readonly initSector: (sector: number) => void
   readonly revealTile: (x: number, y: number) => void
@@ -32,12 +37,15 @@ interface GameStore {
   readonly startPlaying: () => void
   readonly startEndless: () => void
   readonly dismissLore: () => void
-  readonly setLongPressing: (value: boolean) => void
   readonly pauseGame: () => void
   readonly resumeGame: () => void
   readonly moveCharacter: (x: number, y: number) => void
   readonly enterDecodeMode: () => void
   readonly exitDecodeMode: () => void
+  readonly enterTagMode: () => void
+  readonly spawnVirus: () => void
+  readonly dismissVirusAlert: () => void
+  readonly activateEMP: () => void
 }
 
 const INITIAL_DECODE_CYCLES = 3
@@ -77,21 +85,24 @@ export const useGameStore = create<GameStore>((set, get) => ({
   characterPosition: START_POSITION,
   isCharacterMoving: false,
   hasSeenLore: false,
-  isLongPressing: false,
   mode: 'story',
   score: 0,
   highScore: loadHighScore(),
   storyHighScore: loadStoryHighScore(),
   decodeMode: false,
-
-  setLongPressing: (value: boolean) => set({ isLongPressing: value }),
+  tagMode: false,
+  virusTiles: [],
+  virusTileSet: new Set<string>(),
+  virusAlertActive: false,
+  empCharges: 0,
+  empFlashActive: false,
 
   dismissLore: () => set({ hasSeenLore: true }),
 
   pauseGame: () => {
     const { phase } = get()
     if (phase !== 'playing') return
-    set({ phase: 'paused', decodeMode: false })
+    set({ phase: 'paused', decodeMode: false, tagMode: false })
   },
 
   resumeGame: () => {
@@ -101,17 +112,25 @@ export const useGameStore = create<GameStore>((set, get) => ({
   },
 
   moveCharacter: (x: number, y: number) => {
-    const { grid, phase } = get()
+    const { grid, phase, virusTileSet } = get()
     if (phase !== 'playing') return
 
     const tile = grid[y]?.[x]
     if (!tile || (!tile.isRevealed && !tile.isDecoded)) return
+
+    // Check for virus death
+    const isVirus = virusTileSet.has(`${x},${y}`)
+    if (isVirus) {
+      set({ characterPosition: { x, y }, phase: 'derezzed' })
+      return
+    }
 
     if (moveTimer) clearTimeout(moveTimer)
     set({
       characterPosition: { x, y },
       isCharacterMoving: true,
       decodeMode: false,
+      tagMode: false,
     })
     moveTimer = setTimeout(() => {
       moveTimer = null
@@ -122,10 +141,106 @@ export const useGameStore = create<GameStore>((set, get) => ({
   enterDecodeMode: () => {
     const { decodeCycles, decodeMode } = get()
     if (decodeCycles <= 0) return
-    set({ decodeMode: !decodeMode }) // toggle
+    set({ decodeMode: !decodeMode, tagMode: false }) // toggle, mutually exclusive with tag
   },
 
   exitDecodeMode: () => set({ decodeMode: false }),
+
+  enterTagMode: () => {
+    const { tagMode } = get()
+    set({ tagMode: !tagMode, decodeMode: false }) // toggle, mutually exclusive with decode
+  },
+
+  spawnVirus: () => {
+    const { grid, phase, characterPosition, virusTiles, virusTileSet } = get()
+    if (phase !== 'playing') return
+
+    const candidates: { x: number; y: number }[] = []
+    for (const row of grid) {
+      for (const t of row) {
+        if (!(t.isRevealed || t.isDecoded)) continue
+        if (t.isIOPort) continue
+        if (t.x === characterPosition.x && t.y === characterPosition.y) continue
+        if (virusTileSet.has(`${t.x},${t.y}`)) continue
+        candidates.push({ x: t.x, y: t.y })
+      }
+    }
+    if (candidates.length === 0) return
+
+    const pick = candidates[Math.floor(Math.random() * candidates.length)]
+    const newVirusTiles = [...virusTiles, pick]
+    set({
+      virusTiles: newVirusTiles,
+      virusTileSet: new Set(newVirusTiles.map((v) => `${v.x},${v.y}`)),
+    })
+  },
+
+  dismissVirusAlert: () => set({ virusAlertActive: false }),
+
+  activateEMP: () => {
+    const { grid, phase, characterPosition, empCharges, virusTiles } = get()
+    if (phase !== 'playing' || empCharges <= 0) return
+
+    const cx = characterPosition.x
+    const cy = characterPosition.y
+
+    // Find FAULTs in 5×5 around PROC-7
+    const removedFaults: { x: number; y: number }[] = []
+    for (let dy = -2; dy <= 2; dy++) {
+      for (let dx = -2; dx <= 2; dx++) {
+        const tx = cx + dx
+        const ty = cy + dy
+        const tile = grid[ty]?.[tx]
+        if (tile && tile.isICE && !tile.isRevealed && !tile.isDecoded) {
+          removedFaults.push({ x: tx, y: ty })
+        }
+      }
+    }
+
+    // Build adjacency delta map
+    const deltaMap = new Map<string, number>()
+    for (const fault of removedFaults) {
+      for (let ndy = -1; ndy <= 1; ndy++) {
+        for (let ndx = -1; ndx <= 1; ndx++) {
+          if (ndx === 0 && ndy === 0) continue
+          const nx = fault.x + ndx
+          const ny = fault.y + ndy
+          const key = `${nx},${ny}`
+          deltaMap.set(key, (deltaMap.get(key) ?? 0) - 1)
+        }
+      }
+    }
+
+    // Update grid immutably
+    const removedSet = new Set(removedFaults.map((f) => `${f.x},${f.y}`))
+    const newGrid = grid.map((row) =>
+      row.map((t) => {
+        const key = `${t.x},${t.y}`
+        if (removedSet.has(key)) {
+          const delta = deltaMap.get(key) ?? 0
+          return { ...t, isICE: false, isRevealed: true, isTagged: false, adjacentICE: Math.max(0, t.adjacentICE + delta) }
+        }
+        const delta = deltaMap.get(key)
+        if (delta !== undefined) {
+          return { ...t, adjacentICE: Math.max(0, t.adjacentICE + delta) }
+        }
+        return t
+      })
+    )
+
+    // Filter viruses in 5×5
+    const newVirusTiles = virusTiles.filter(
+      (v) => Math.abs(v.x - cx) > 2 || Math.abs(v.y - cy) > 2
+    )
+
+    set({
+      grid: newGrid,
+      empCharges: empCharges - 1,
+      empFlashActive: true,
+      virusTiles: newVirusTiles,
+      virusTileSet: new Set(newVirusTiles.map((v) => `${v.x},${v.y}`)),
+    })
+  },
 
   initSector: (sector: number) => {
     const config = getSectorConfig(sector)
@@ -139,6 +254,11 @@ export const useGameStore = create<GameStore>((set, get) => ({
       decodingTarget: null,
       characterPosition: START_POSITION,
       decodeMode: false,
+      tagMode: false,
+      virusTiles: [],
+      virusTileSet: new Set<string>(),
+      virusAlertActive: false,
+      empCharges: sector >= 2 ? 1 : 0,
     })
   },
 
@@ -160,11 +280,17 @@ export const useGameStore = create<GameStore>((set, get) => ({
       mode: 'story',
       score: 0,
       decodeMode: false,
+      tagMode: false,
+      virusTiles: [],
+      virusTileSet: new Set<string>(),
+      virusAlertActive: false,
+      empCharges: 0,
+      empFlashActive: false,
     })
   },
 
   startEndless: () => {
-    const config = getSectorConfig(1)
+    const config = generateEndlessSector(1)
     const grid = generateGrid(config.gridSize, config.iceCount)
     set({
       grid,
@@ -181,6 +307,12 @@ export const useGameStore = create<GameStore>((set, get) => ({
       mode: 'endless',
       score: 0,
       decodeMode: false,
+      tagMode: false,
+      virusTiles: [],
+      virusTileSet: new Set<string>(),
+      virusAlertActive: false,
+      empCharges: 0,
+      empFlashActive: false,
     })
   },
 
@@ -191,7 +323,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
     const tile = grid[y]?.[x]
     if (!tile || tile.isRevealed || tile.isTagged || tile.isDecoded) return
 
-    // Scan mode: must be within 8-neighbor range of PROC-7
+    // Scan mode: must be within 5×5 scan zone of PROC-7
     if (!isInScanZone(x, y, characterPosition)) return
 
     const size = grid.length
@@ -258,11 +390,14 @@ export const useGameStore = create<GameStore>((set, get) => ({
   },
 
   tagTile: (x: number, y: number) => {
-    const { grid, phase } = get()
+    const { grid, phase, characterPosition } = get()
     if (phase !== 'playing') return
 
     const tile = grid[y]?.[x]
     if (!tile || tile.isRevealed || tile.isDecoded) return
+
+    // Tagging restricted to scan zone
+    if (!isInScanZone(x, y, characterPosition)) return
 
     const newGrid = grid.map((row) =>
       row.map((t) =>
@@ -353,7 +488,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
     }
 
     const config =
-      mode === 'endless' && nextSector > TOTAL_SECTORS
+      mode === 'endless'
         ? generateEndlessSector(nextSector)
         : getSectorConfig(nextSector)
 
@@ -378,6 +513,11 @@ export const useGameStore = create<GameStore>((set, get) => ({
       characterPosition: START_POSITION,
       isCharacterMoving: false,
       decodeMode: false,
+      tagMode: false,
+      virusTiles: [],
+      virusTileSet: new Set<string>(),
+      virusAlertActive: false,
+      empCharges: nextSector >= 2 ? 1 : 0,
     })
   },
 
@@ -396,10 +536,15 @@ export const useGameStore = create<GameStore>((set, get) => ({
       characterPosition: START_POSITION,
       isCharacterMoving: false,
       hasSeenLore: false,
-      isLongPressing: false,
       mode: 'story',
       score: 0,
       decodeMode: false,
+      tagMode: false,
+      virusTiles: [],
+      virusTileSet: new Set<string>(),
+      virusAlertActive: false,
+      empCharges: 0,
+      empFlashActive: false,
     })
   },
 }))

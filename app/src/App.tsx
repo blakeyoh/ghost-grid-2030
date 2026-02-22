@@ -9,6 +9,8 @@ import { DecodeMinigame } from './components/ui/DecodeMinigame'
 import { SectorTransition } from './components/ui/SectorTransition'
 import { LoreModal } from './components/ui/LoreModal'
 import { PauseScreen } from './components/ui/PauseScreen'
+import { VirusManager } from './components/ui/VirusManager'
+import { VirusAlert } from './components/ui/VirusAlert'
 
 export default function App() {
   return (
@@ -32,6 +34,8 @@ export default function App() {
       <SectorTransition />
       <LoreModal />
       <PauseScreen />
+      <VirusManager />
+      <VirusAlert />
     </div>
   )
 }

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useGameStore } from '../../store/gameStore'
 
 export function SectorTransition() {
@@ -6,16 +6,21 @@ export function SectorTransition() {
   const sector = useGameStore((s) => s.sector)
   const advanceSector = useGameStore((s) => s.advanceSector)
   const [countdown, setCountdown] = useState(3)
+  const hasAdvancedRef = useRef(false)
 
   useEffect(() => {
     if (phase !== 'transitioning') return
 
+    hasAdvancedRef.current = false
     setCountdown(3)
     const interval = setInterval(() => {
       setCountdown((prev) => {
         if (prev <= 1) {
           clearInterval(interval)
-          advanceSector()
+          if (!hasAdvancedRef.current) {
+            hasAdvancedRef.current = true
+            advanceSector()
+          }
           return 0
         }
         return prev - 1

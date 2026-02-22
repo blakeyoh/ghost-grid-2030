@@ -20,18 +20,41 @@ export function LoreModal() {
     <div className="overlay lore-modal-backdrop">
       <div className="lore-modal">
         <div className="lore-header">
-          SYSTEM INTEGRITY: CRITICAL
+          ALERT: SYSTEM IS 98% COMPROMISED
         </div>
         <div className="lore-subheader">
-          CORRUPTION SPREADING ACROSS ALL SECTORS
+          CORRUPTION SPREADING — TERMINATION IMMINENT
         </div>
         <div className="lore-divider" />
         <div className="lore-body">
-          <p>You are <span className="lore-highlight">PROC-7</span></p>
-          <p>A maintenance daemon that was never shut down.</p>
-          <p>Navigate the grid. Avoid the FAULT NODES.</p>
-          <p>Reach the <span className="lore-highlight">RESTORE PORT</span> to purge each sector.</p>
-          <p className="lore-tagline">One ghost process. One chance to fix it all.</p>
+          <p>The machine is going dark.</p>
+          <p>A digital shadow is erasing every sector of the grid.</p>
+          <p>You are <span className="lore-highlight">PROC-7</span> — the last spark of light in the system.</p>
+          <p>Navigate the sectors. Avoid the <span className="lore-highlight">FAULT NODES</span>.</p>
+          <p>Reach the <span className="lore-highlight">RESTORE PORT</span> before you are overwritten.</p>
+          <p className="lore-tagline">Stop the machine from being fully corrupted.</p>
+        </div>
+        <div className="lore-controls">
+          <div className="pause-control-row">
+            <span className="pause-control-key">CLICK unrevealed tile</span>
+            <span className="pause-control-desc">Reveal (scan zone only)</span>
+          </div>
+          <div className="pause-control-row">
+            <span className="pause-control-key">CLICK revealed tile</span>
+            <span className="pause-control-desc">Move PROC-7</span>
+          </div>
+          <div className="pause-control-row">
+            <span className="pause-control-key">TAG button</span>
+            <span className="pause-control-desc">Flag suspected FAULTs</span>
+          </div>
+          <div className="pause-control-row">
+            <span className="pause-control-key">DECODE button</span>
+            <span className="pause-control-desc">Safe-scan a tile</span>
+          </div>
+          <div className="pause-control-row">
+            <span className="pause-control-key">EMP button</span>
+            <span className="pause-control-desc">Clear FAULTs/viruses in range</span>
+          </div>
         </div>
         <button className="overlay-button" onClick={dismissLore}>
           BEGIN SEQUENCE

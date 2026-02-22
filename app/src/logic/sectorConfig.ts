@@ -49,11 +49,8 @@ function sectorAccentColor(sector: number): string {
 }
 
 export function generateEndlessSector(sector: number): SectorConfig {
-  const gridSize = Math.min(20, 10 + Math.floor((sector - 1) / 3))
-  const iceCount = Math.min(
-    Math.floor(gridSize * gridSize * 0.28),
-    10 + sector * 2
-  )
+  const gridSize = Math.min(20, 4 + sector)
+  const iceCount = Math.max(3, Math.round(gridSize * gridSize * 0.15))
   return {
     sector,
     gridSize,
